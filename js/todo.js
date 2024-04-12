@@ -26,8 +26,11 @@ function printToDo(newToDo) {
   const span = document.createElement("span");
   span.innerText = newToDo.text;
 
+  const i = document.createElement("i");
+  i.setAttribute("class", "fa-regular fa-circle-xmark");
+
   const button = document.createElement("button");
-  button.innerText = "❌";
+  button.append(i);
   button.addEventListener("click", deleteToDo);
 
   li.appendChild(span);
@@ -36,7 +39,7 @@ function printToDo(newToDo) {
 }
 
 function deleteToDo(event) {
-  const li = event.target.parentElement;
+  const li = event.target.parentElement.parentElement;
   li.remove();
   toDos = toDos.filter((toDo) => toDo.id !== parseInt(li.id));
   saveToDo();
