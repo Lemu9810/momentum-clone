@@ -27,7 +27,8 @@ img {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 25%;
+  min-width: 30%;
+  margin-bottom: 15px;
 }
 
 #login-form input,
@@ -37,7 +38,7 @@ img {
   background-color: rgba(0, 0, 0, 0);
   border-bottom: 2px solid white;
   font-size: 18px;
-  margin: 10px;
+  margin-bottom: 15px;
   padding: 10px 0px;
   color: white;
   width: 100%;
@@ -57,11 +58,6 @@ img {
   color: white;
 }
 
-#todo-list {
-  position: absolute;
-  top: 520px;
-}
-
 #todo-list li {
   margin-bottom: 10px;
 }
@@ -75,12 +71,13 @@ img {
 
 #greeting {
   font-size: 20px;
+  margin-bottom: 15px;
 }
 
 #clock {
   font-weight: 600;
-  font-size: 80px;
-  margin-bottom: 10px;
+  font-size: 6rem;
+  margin-bottom: 15px;
 }
 
 #quote {
@@ -89,6 +86,7 @@ img {
   position: absolute;
   bottom: 10px;
   align-items: center;
+  max-width: 95%;
 }
 
 #quote span:first-child {

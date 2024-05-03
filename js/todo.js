@@ -2,59 +2,80 @@ const toDoForm = document.querySelector("#todo-form");
 const toDoInput = toDoForm.querySelector("input");
 const toDoList = document.querySelector("#todo-list");
 
-const TODOS_KEY = "todos";
+let todos = [];
 
-let toDos = [];
+class Todo {
+  constructor(key, content, checked) {
+    this.key = key;
+    this.content = content;
+    this.checked = checked;
+  }
+}
 
-function handleToDoSubmit(event) {
+function onClickSubmit(event) {
   event.preventDefault();
-  const newToDo = toDoInput.value;
+  const key = new Date().getTime();
+  const content = toDoInput.value;
+  const checked = false;
+
+  const newTodo = new Todo(key, content, checked);
+  todos.push(newTodo);
+  saveTodos();
+  printTodos(newTodo);
   toDoInput.value = "";
-  const newToDoObj = {
-    text: newToDo,
-    id: Date.now(),
-  };
-  toDos.push(newToDoObj);
-  printToDo(newToDoObj);
-  saveToDo();
 }
 
-function printToDo(newToDo) {
-  const li = document.createElement("li");
-  li.id = newToDo.id;
-
-  const span = document.createElement("span");
-  span.innerText = newToDo.text;
-
-  const i = document.createElement("i");
-  i.setAttribute("class", "fa-regular fa-circle-xmark");
-
-  const button = document.createElement("button");
-  button.append(i);
-  button.addEventListener("click", deleteToDo);
-
-  li.appendChild(span);
-  li.appendChild(button);
-  toDoList.appendChild(li);
+function loadTodos() {
+  const savedTodos = JSON.parse(localStorage.getItem("todos")) || [];
+  todos = savedTodos;
 }
 
-function deleteToDo(event) {
-  const li = event.target.parentElement.parentElement;
-  li.remove();
-  toDos = toDos.filter((toDo) => toDo.id !== parseInt(li.id));
-  saveToDo();
+function saveTodos() {
+  localStorage.setItem("todos", JSON.stringify(todos));
 }
 
-function saveToDo() {
-  localStorage.setItem(TODOS_KEY, JSON.stringify(toDos));
+function printTodos(newTodo) {
+  const newList = document.createElement("li");
+  const newCheck = document.createElement("input");
+  const newSpan = document.createElement("span");
+  const newI = document.createElement("i");
+  const newBtn = document.createElement("button");
+
+  newList.setAttribute("id", newTodo.key);
+  newCheck.setAttribute("type", "checkbox");
+  newCheck.checked = newTodo.checked;
+  newCheck.addEventListener("click", onClickCheck);
+  newSpan.innerText = newTodo.content;
+  newI.setAttribute("class", "fa-solid fa-x");
+  newBtn.append(newI);
+  newBtn.addEventListener("click", onClickDelate);
+
+  if (newTodo.checked) newList.classList.add("checked");
+
+  newList.append(newCheck, newSpan, newBtn);
+  toDoList.appendChild(newList);
 }
 
-toDoForm.addEventListener("submit", handleToDoSubmit);
-
-const savedToDo = localStorage.getItem(TODOS_KEY);
-
-if (savedToDo !== null) {
-  const parsedToDo = JSON.parse(savedToDo);
-  toDos = parsedToDo;
-  parsedToDo.forEach(printToDo);
+function onClickCheck(event) {
+  const checkParents = event.target.parentElement;
+  todos.map((todo) => {
+    if (todo.key === +checkParents.id) {
+      todo.checked = !todo.checked;
+      checkParents.classList.toggle("checked");
+    }
+  });
+  saveTodos();
 }
+
+function onClickDelate(event) {
+  const buttonParents = event.target.parentElement.parentElement;
+  todos = todos.filter((todo) => todo.key !== +buttonParents.id);
+  buttonParents.remove();
+  saveTodos();
+}
+
+loadTodos();
+todos.length > 0
+  ? todos.forEach((todo) => printTodos(todo))
+  : console.log("no saved date");
+toDoForm.addEventListener("submit", onClickSubmit);
